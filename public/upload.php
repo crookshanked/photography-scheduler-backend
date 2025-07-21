@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $destination = $spreadsheetDir . $uniqueFileName;
         if (move_uploaded_file($fileTmpPath, $destination)) {
             echo 'File successfully uploaded: ' . htmlspecialchars($fileName);
-            error_log('File successfully uploaded: ' . $fileName . '\n File size: ' . $fileSize . ' bytes, File type: ' . $fileType . ', Destination: ' . $destination);
+            error_log('File successfully uploaded: ' . $fileName . PHP_EOL . ' File size: ' . $fileSize . ' bytes, File type: ' . $fileType . ', Destination: ' . $destination);
             // TODO: Process the uploaded .xlsx file here using PhpSpreadsheet.
             // Example:
 
@@ -73,13 +73,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         PDO::ATTR_EMULATE_PREPARES => false, // Use native prepares
                     ]
                 );
-                error_log('\nDatabase connection established.');
+                error_log(PHP_EOL . 'Database connection established.');
             } catch (PDOException $e) {
                 error_log('Database connection failed: ' . $e->getMessage());
                 die('Database connection failed.');
             }
             $db->beginTransaction();
-            error_log('\nBegin spreadsheet processing');
+            error_log(PHP_EOL . 'Begin spreadsheet processing');
             $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($destination);
             // Process the spreadsheet data as needed 
             // For example, iterate through rows and import data into the database.
@@ -164,13 +164,92 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 error_log('Row data: ' . implode(', ', $rowData));
                 $uuid = Uuid::uuid4()->toString();
                 // Insert the row into the schedule_imported table 
+                //----- Example row data: -----//
+                // date: June 24, 2025
+                // start_time: 9:50 AM
+                // end_time: 10:05 AM
+                // reason: Essentials 2
+                // student_first_name: Michael
+                // student_last_name: Thoennes
+                // comment: Will need big and tall size shirt, bow tie, and jacket.
+                $dateValue = $rowData[$columnMap['date']] ?? null;
+
+                // Skip processing if the date cell is empty or if it's the header row
+                if (empty($dateValue) || $dateValue === 'Date') {
+                    continue;
+                }
+
+                $formattedDate = null;
+                // Check if the date is in Excel's timestamp format (a number)
+                if (is_numeric($dateValue)) {
+                    $formattedDate = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($dateValue)->format('Y-m-d');
+                } else {
+                    // Otherwise, try to parse it as a string (e.g., "June 24, 2025")
+                    $dateObject = DateTime::createFromFormat('F j, Y', $dateValue);
+                    if ($dateObject) {
+                        $formattedDate = $dateObject->format('Y-m-d');
+                    } else {
+                        error_log("Skipping row due to invalid date format: " . $dateValue);
+                        continue; // Skip this row if the date format is not recognized
+                    }
+                }
+                
+                // Handle the start_time and end_time fields.
+                $dateValue = $rowData[$columnMap['date']] ?? null;
+
+                // Skip processing if the date cell is empty or if it's the header row
+                if (empty($dateValue) || $dateValue === 'Date') {
+                    continue;
+                }
+
+                // TODO: Handle 'start_time' and 'end_time' database table time fields. Example data: '9:50 AM' - Maybe strtotime()?
+$startTimeValue = $rowData[$columnMap['start_time']] ?? null;
+                $endTimeValue = $rowData[$columnMap['end_time']] ?? null;
+
+                $formattedStartTime = null;
+                $formattedEndTime = null;
+
+                // Function to format time
+                $formatTime = function($timeValue) {
+                    if (empty($timeValue)) {
+                        return null;
+                    }
+                    // Check if the time is in Excel's timestamp format (a number)
+                    if (is_numeric($timeValue)) {
+                        // Excel time is a fraction of a day, so multiply by seconds in a day
+                        $seconds = $timeValue * 86400;
+                        return gmdate('H:i:s', $seconds); // Format as HH:MM:SS
+                    } else {
+                        // Try to parse as a string (e.g., "9:50 AM", "10:05 AM")
+                        $timeObject = date_create($timeValue);
+                        if ($timeObject) {
+                            return $timeObject->format('H:i:s'); // Format as HH:MM:SS
+                        }
+                    }
+                    return null; // Return null if time cannot be parsed
+                };
+
+                $formattedStartTime = $formatTime($startTimeValue);
+                $formattedEndTime = $formatTime($endTimeValue);
+
+                if ($formattedStartTime === null) {
+                    error_log("Skipping row due to invalid start_time format: " . $startTimeValue);
+                    continue;
+                }
+                if ($formattedEndTime === null) {
+                    error_log("Skipping row due to invalid end_time format: " . $endTimeValue);
+                    continue;
+                }
+                
+
+
                 $db->prepare(
                     "INSERT INTO schedule_imported (id, date, start_time, end_time, reason, student_first_name, student_last_name, comments, source, datetimeadded) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"
                 )->execute([
                     $uuid,
-                    $rowData[$columnMap['date']] ?? null,
-                    $rowData[$columnMap['start_time']] ?? null,
-                    $rowData[$columnMap['end_time']] ?? null,
+                    $formattedDate,
+                    $formattedStartTime,
+                    $formattedEndTime,
                     $rowData[$columnMap['reason']] ?? null,
                     $rowData[$columnMap['student_first_name']] ?? null,
                     $rowData[$columnMap['student_last_name']] ?? null,
@@ -182,7 +261,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 //          ->execute([$rowData[0], $rowData[1], $rowData[2], ...]);
                 // Make sure to sanitize and validate the data before inserting into the database.
             }
-            echo 'Spreadsheet processed successfully.';   
+            echo 'Spreadsheet processed successfully.';  
+            error_log('Spreadsheet processed successfully.');
+            $db->commit();
+            $db->close();
+            echo 'Database transaction committed.';
+            error_log('Database transaction committed.');
         } else {
             die('Error: Could not move the uploaded file. Please check permissions on the uploads directory.');
         }
