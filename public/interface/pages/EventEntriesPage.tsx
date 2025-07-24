@@ -1,17 +1,17 @@
 
 import React, { useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import Layout from '../components/Layout';
 import Header from '../components/Header';
 import FilterDropdown from '../components/FilterDropdown';
 import { Entry } from '../types';
+import EntryTable from '../components/EntryTable';
 
 const EventEntries: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
   const event_id = eventId;
   const { getEventById, getEntriesByEventId, updateEntryDoneStatus, loading } = useData();
-  const navigate = useNavigate();
 
   const event = event_id ? getEventById(event_id) : undefined;
   const entries = event_id ? getEntriesByEventId(event_id) : [];
@@ -21,10 +21,6 @@ const EventEntries: React.FC = () => {
     console.log('entries:', entries);
   }, [event_id, entries]);
 
-  const handleRowClick = (entry: Entry) => {
-    navigate(`/entry/${entry.entry_id}`);
-  };
-
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, entryId: string) => {
     e.stopPropagation();
     updateEntryDoneStatus(entryId, e.target.checked);
@@ -32,8 +28,7 @@ const EventEntries: React.FC = () => {
 
   const eventDate = event ? new Date(event.date).toLocaleDateString('en-US', { timeZone: 'UTC', month: '2-digit', day: '2-digit', year: 'numeric' }) : '';
   const subtitle = event ? `${event.name} (${eventDate})` : 'Loading...';
-  // console.log(event);
-  // console.log(entries);
+
   return (
     <Layout loading={loading}>
       <Header title="Photography Schedule" subtitle={subtitle} />
@@ -46,42 +41,10 @@ const EventEntries: React.FC = () => {
         <FilterDropdown />
         <FilterDropdown />
       </div>
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full leading-normal">
-            <thead>
-              <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                <th className="py-3 px-6 text-left">Date</th>
-                <th className="py-3 px-6 text-left">Timeframe</th>
-                <th className="py-3 px-6 text-left">Name</th>
-                <th className="py-3 px-6 text-left">Reason</th>
-                <th className="py-3 px-6 text-center">Done</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-800 text-sm font-light">
-              {entries.map((entry) => (
-                <tr key={entry.entry_id} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer" onClick={() => handleRowClick(entry)}>
-                  <td className="py-4 px-6 text-left whitespace-nowrap">{entry.date}</td>
-                  <td className="py-4 px-6 text-left whitespace-nowrap">{entry.timeframe}</td>
-                  <td className="py-4 px-6 text-left">{entry.name}</td>
-                  <td className="py-4 px-6 text-left">{entry.reason}</td>
-                  <td className="py-4 px-6 text-center">
-                    <input
-                      type="checkbox"
-                      className="form-checkbox h-6 w-6 text-green-600 border-gray-400 rounded focus:ring-green-500"
-                      checked={entry.done}
-                      onChange={(e) => handleCheckboxChange(e, entry.entry_id)}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <EntryTable entries={entries} onCheckboxChange={handleCheckboxChange} />
     </Layout>
   );
 };
+
 
 export default EventEntries;
