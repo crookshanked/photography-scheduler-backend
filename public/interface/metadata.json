@@ -1,0 +1,5 @@
+{
+  "name": "Photography Scheduler",
+  "description": "An application to view and manage photography session schedules for various events. Users can see upcoming and past events, view participant lists for each event, and check off completed sessions, which are visualized with a QR code for check-in.",
+  "requestFramePermissions": []
+}
