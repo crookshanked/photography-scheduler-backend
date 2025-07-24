@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../app/config.php'; ?>
+<?php require_once __DIR__ . '/../../app/config.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Photography Schedule</title>
     <script>
-      // Expose server-side configuration to the browser
       window.VITE_CONFIG = {
         API_KEY: "<?php echo htmlspecialchars($apiKey, ENT_QUOTES, 'UTF-8'); ?>"
       };

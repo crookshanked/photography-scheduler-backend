@@ -21,49 +21,60 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Read the API_KEY from the global window object injected by PHP
+  const API_KEY = (window as any).VITE_CONFIG?.API_KEY;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api.php');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (!API_KEY) {
+          setError("API key is missing. It should be injected into the page by the server.");
+          setLoading(false);
+          return;
         }
-        const result = await response.json();
-        console.log(result);
-        if (result.status === 'success' && Array.isArray(result.data)) {
-          const rawEntries = result.data;
 
-          // Process raw data into events (grouped by date) and entries
-          const eventsMap = new Map<string, Event>();
-          const processedEntries: Entry[] = rawEntries.map((item: any) => {
-            // Create or get the event for this date
-            if (!eventsMap.has(item.date)) {
-              eventsMap.set(item.date, {
-                id: item.id, // Use date as a unique event ID
-                name: item.name,
-                location: item.location,
-                date: item.date
-              });
-            }
+        // Fetch both events and entries in parallel using the new API structure
+        const [eventsResponse, entriesResponse] = await Promise.all([
+          fetch(`/api.php?api_key=${API_KEY}&action=get_events`),
+          fetch(`/api.php?api_key=${API_KEY}&action=get_entries`),
+        ]);
 
-            // Create the entry, mapping API fields to the Entry type
-            return {
-              id: item.id,
-              eventId: item.date,
-              studentFirstName: item.student_first_name,
-              studentLastName: item.student_last_name,
-              reason: item.reason,
-              comments: item.comments,
-              dateTime: `${item.date}T${item.start_time}`,
-              done: false, // Default 'done' status to false
-            };
-          });
-
-          setEvents(Array.from(eventsMap.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
-          setEntries(processedEntries);
-        } else {
-          throw new Error(result.message || 'Failed to fetch data.');
+        if (!eventsResponse.ok) {
+          throw new Error(`Failed to fetch events: ${eventsResponse.statusText}`);
         }
+        if (!entriesResponse.ok) {
+          throw new Error(`Failed to fetch entries: ${entriesResponse.statusText}`);
+        }
+
+        const eventsResult = await eventsResponse.json();
+        const entriesResult = await entriesResponse.json();
+
+        if (eventsResult.status !== 'success' || !Array.isArray(eventsResult.data)) {
+          throw new Error(eventsResult.message || 'Invalid event data received.');
+        }
+        if (entriesResult.status !== 'success' || !Array.isArray(entriesResult.data)) {
+          throw new Error(entriesResult.message || 'Invalid entry data received.');
+        }
+
+        // The API now returns well-structured events.
+        const fetchedEvents: Event[] = eventsResult.data;
+
+        // Process raw entries from the API
+        const processedEntries: Entry[] = entriesResult.data.map((item: any) => {
+          return {
+            id: item.id,
+            eventId: item.date, // eventId is the date, linking it to an Event
+            studentFirstName: item.student_first_name,
+            studentLastName: item.student_last_name,
+            reason: item.reason,
+            comments: item.comments,
+            dateTime: `${item.date}T${item.start_time}`,
+            done: false, // Default 'done' status to false
+          };
+        });
+
+        setEvents(fetchedEvents.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+        setEntries(processedEntries);
       } catch (e: any) {
         setError(e.message);
         console.error("Failed to fetch schedule data:", e);
