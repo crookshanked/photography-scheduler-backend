@@ -55,6 +55,7 @@ try {
                     'event_id' => $event['event_id'],
                     'date' => $event['date'], 
                     'name' => $event['name'], 
+                    'location' => $event['location'], 
                 ];
             }
             $response = [

@@ -8,6 +8,8 @@ interface EventTableProps {
 }
 
 const EventTable: React.FC<EventTableProps> = ({ events }) => {
+  // console.log(events);
+
   const navigate = useNavigate();
 
   const handleRowClick = (eventId: string) => {

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import Layout from '../components/Layout';
@@ -8,12 +8,18 @@ import FilterDropdown from '../components/FilterDropdown';
 import { Entry } from '../types';
 
 const EventEntries: React.FC = () => {
-  const { event_id } = useParams<{ event_id: string }>();
+  const { eventId } = useParams<{ eventId: string }>();
+  const event_id = eventId;
   const { getEventById, getEntriesByEventId, updateEntryDoneStatus, loading } = useData();
   const navigate = useNavigate();
 
   const event = event_id ? getEventById(event_id) : undefined;
-  const entries = event_id ? getEntriesByEventID(event_id) : [];
+  const entries = event_id ? getEntriesByEventId(event_id) : [];
+
+  useEffect(() => {
+    console.log('event_id:', event_id);
+    console.log('entries:', entries);
+  }, [event_id, entries]);
 
   const handleRowClick = (entry: Entry) => {
     navigate(`/entry/${entry.entry_id}`);
@@ -23,17 +29,11 @@ const EventEntries: React.FC = () => {
     e.stopPropagation();
     updateEntryDoneStatus(entryId, e.target.checked);
   };
-  
-  // const formatDate = (dateString: string) => {
-  //   const date = new Date(dateString);
-  //   const datePart = date.toLocaleDateString('en-US', { timeZone: 'UTC', month: '2-digit', day: '2-digit', year: '2-digit' });
-  //   const timePart = date.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit', hour12: true });
-  //   return `${datePart} ${timePart}`;
-  // };
 
   const eventDate = event ? new Date(event.date).toLocaleDateString('en-US', { timeZone: 'UTC', month: '2-digit', day: '2-digit', year: 'numeric' }) : '';
   const subtitle = event ? `${event.name} (${eventDate})` : 'Loading...';
-
+  // console.log(event);
+  // console.log(entries);
   return (
     <Layout loading={loading}>
       <Header title="Photography Schedule" subtitle={subtitle} />
@@ -51,15 +51,17 @@ const EventEntries: React.FC = () => {
           <table className="min-w-full leading-normal">
             <thead>
               <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                <th className="py-3 px-6 text-left">Date Time</th>
+                <th className="py-3 px-6 text-left">Date</th>
+                <th className="py-3 px-6 text-left">Timeframe</th>
                 <th className="py-3 px-6 text-left">Name</th>
-                <th className="py-3 px-6 text-left">Package</th>
+                <th className="py-3 px-6 text-left">Reason</th>
                 <th className="py-3 px-6 text-center">Done</th>
               </tr>
             </thead>
             <tbody className="text-gray-800 text-sm font-light">
               {entries.map((entry) => (
                 <tr key={entry.entry_id} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer" onClick={() => handleRowClick(entry)}>
+                  <td className="py-4 px-6 text-left whitespace-nowrap">{entry.date}</td>
                   <td className="py-4 px-6 text-left whitespace-nowrap">{entry.timeframe}</td>
                   <td className="py-4 px-6 text-left">{entry.name}</td>
                   <td className="py-4 px-6 text-left">{entry.reason}</td>
