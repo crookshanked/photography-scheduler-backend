@@ -16,7 +16,7 @@ const EventEntries: React.FC = () => {
   const entries = eventId ? getEntriesByEventId(eventId) : [];
 
   const handleRowClick = (entry: Entry) => {
-    navigate(`/entry/${entry.id}`);
+    navigate(`/entry/${entry.entry_id}`);
   };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, entryId: string) => {
@@ -59,16 +59,16 @@ const EventEntries: React.FC = () => {
             </thead>
             <tbody className="text-gray-800 text-sm font-light">
               {entries.map((entry) => (
-                <tr key={entry.id} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer" onClick={() => handleRowClick(entry)}>
-                  <td className="py-4 px-6 text-left whitespace-nowrap">{formatDate(entry.dateTime)}</td>
+                <tr key={entry.entry_id} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer" onClick={() => handleRowClick(entry)}>
+                  <td className="py-4 px-6 text-left whitespace-nowrap">{formatDate(entry.start_time)}</td>
                   <td className="py-4 px-6 text-left">{entry.name}</td>
-                  <td className="py-4 px-6 text-left">{entry.package}</td>
+                  <td className="py-4 px-6 text-left">{entry.reason}</td>
                   <td className="py-4 px-6 text-center">
                     <input
                       type="checkbox"
                       className="form-checkbox h-6 w-6 text-green-600 border-gray-400 rounded focus:ring-green-500"
                       checked={entry.done}
-                      onChange={(e) => handleCheckboxChange(e, entry.id)}
+                      onChange={(e) => handleCheckboxChange(e, entry.entry_id)}
                       onClick={(e) => e.stopPropagation()}
                     />
                   </td>

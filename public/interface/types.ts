@@ -1,16 +1,19 @@
 
 export interface Event {
-  id: string;
+  event_id: string;
   name: string;
   location: string;
   date: string; // ISO string format
 }
 
 export interface Entry {
-  id: string;
-  eventId: string;
+  entry_id: string;
+  parent_event_id: string;
+  date: string; // ISO string format
+  start_time: string; // ISO string format
+  end_time: string; // ISO string format
   name: string;
-  package: string;
-  dateTime: string; // ISO string format
+  reason: string;
+  date_time_added: string; // ISO string format
   done: boolean;
 }

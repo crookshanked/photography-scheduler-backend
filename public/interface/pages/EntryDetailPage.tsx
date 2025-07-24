@@ -8,11 +8,11 @@ import Header from '../components/Header';
 import { QR_CODE_BASE_URL } from '../constants';
 
 const EntryDetail: React.FC = () => {
-  const { entryId } = useParams<{ entryId: string }>();
+  const { entry_id } = useParams<{ entry_id: string }>();
   const { getEntryById, updateEntryDoneStatus, loading, getEventById } = useData();
 
-  const entry = entryId ? getEntryById(entryId) : undefined;
-  const event = entry ? getEventById(entry.eventId) : undefined;
+  const entry = entry_id ? getEntryById(entry_id) : undefined;
+  const event = entry ? getEventById(entry.parent_event_id) : undefined;
 
   if (loading) {
     return <Layout loading={true}><div/></Layout>;
@@ -29,8 +29,35 @@ const EntryDetail: React.FC = () => {
     );
   }
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateEntryDoneStatus(entry.id, e.target.checked);
+  const handleCheckboxChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newStatus = e.target.checked;
+    updateEntryDoneStatus(entry.entry_id, newStatus);
+
+    try {
+      const response = await fetch('/api.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'updateEntryStatus',
+          entry_id: entry.entry_id,
+          status: newStatus ? 1 : 0, // Convert boolean to 1 or 0 for database
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Update successful:', result);
+    } catch (error) {
+      console.error('Error updating entry status:', error);
+      // Optionally, revert the UI change if the API call fails
+      updateEntryDoneStatus(entry.entry_id, !newStatus);
+      alert('Failed to update status. Please try again.');
+    }
   };
   
   const eventDate = new Date(event.date).toLocaleDateString('en-US', { timeZone: 'UTC', month: '2-digit', day: '2-digit', year: 'numeric' });
@@ -53,12 +80,12 @@ const EntryDetail: React.FC = () => {
     <Layout loading={loading}>
         <Header title="Photography Schedule" subtitle={subtitle} />
         <div className="mt-6 mb-4">
-            <Link to={`/event/${event.id}`} className="text-blue-600 hover:underline text-sm mb-4 block">{'<< Back to List'}</Link>
+            <Link to={`/event/${event.event_id}`} className="text-blue-600 hover:underline text-sm mb-4 block">{'<< Back to List'}</Link>
         </div>
         <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg text-center">
-            <p className="text-gray-600 text-lg">{formatDateTime(entry.dateTime)}</p>
+            <p className="text-gray-600 text-lg">{formatDateTime(entry.date)}</p>
             <h2 className="text-4xl font-light text-gray-900 my-2">{entry.name}</h2>
-            <p className="text-2xl text-gray-700 font-light">{entry.package}</p>
+            <p className="text-2xl text-gray-700 font-light">{entry.reason}</p>
             <a href="#" className="text-blue-500 hover:underline mt-2 inline-block">More...</a>
             
             <div className="mt-8 flex flex-col items-center">
@@ -79,7 +106,8 @@ const EntryDetail: React.FC = () => {
             </div>
 
             <div className="mt-8 flex justify-center">
-                {entry.id && <QRCode value={`${QR_CODE_BASE_URL}${entry.id}`} size={256} />}
+                <p>TODO: This needs to use the proper unique ID from the provider scraped in the converted table, or via API?</p>
+                {entry.entry_id && <QRCode value={`${QR_CODE_BASE_URL}${entry.entry_id}`} size={256} />}
             </div>
         </div>
     </Layout>

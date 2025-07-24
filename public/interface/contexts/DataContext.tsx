@@ -5,6 +5,7 @@ import { Event, Entry } from '../types';
 
 interface DataContextType {
   events: Event[];
+  pastEvents: Event[];
   entries: Entry[];
   loading: boolean;
   getEventById: (id: string) => Event | undefined;
@@ -17,26 +18,32 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [events, setEvents] = useState<Event[]>([]);
+  const [pastEvents, setPastEvents] = useState<Event[]>([]);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Read the API_KEY from the global window object injected by PHP
-  const API_KEY = (window as any).VITE_CONFIG?.API_KEY;
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (!API_KEY) {
-          setError("API key is missing. It should be injected into the page by the server.");
-          setLoading(false);
-          return;
+        // Step 1: Fetch the API key from a secure endpoint.
+        // This endpoint should verify the user's session before returning the key.
+        const apiKeyResponse = await fetch('../../get-key.php');
+        // const apiKeyResponse = await fetch('/config/www/scheduler/public/get-key.php');
+        if (!apiKeyResponse.ok) {
+          const errorResult = await apiKeyResponse.json();
+          throw new Error(errorResult.message || `API Key fetch failed: ${apiKeyResponse.statusText}`);
         }
 
-        // Fetch both events and entries in parallel using the new API structure
+        const apiKeyResult = await apiKeyResponse.json();
+        if (apiKeyResult.status !== 'success' || !apiKeyResult.apiKey) {
+          throw new Error(apiKeyResult.message || 'Invalid API key response.');
+        }
+        const apiKey = apiKeyResult.apiKey;
+
+        // Step 2: Use the fetched API key to get events and entries.
         const [eventsResponse, entriesResponse] = await Promise.all([
-          fetch(`/api.php?api_key=${API_KEY}&action=get_events`),
-          fetch(`/api.php?api_key=${API_KEY}&action=get_entries`),
+          fetch(`../../api.php?api_key=${apiKey}&action=get_events`),
+          fetch(`../../api.php?api_key=${apiKey}&action=get_entries`),
         ]);
 
         if (!eventsResponse.ok) {
@@ -62,18 +69,33 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         // Process raw entries from the API
         const processedEntries: Entry[] = entriesResult.data.map((item: any) => {
           return {
-            id: item.id,
-            eventId: item.date, // eventId is the date, linking it to an Event
+            entry_id: item.entry_id,
+            parent_event_id: item.parent_event_id,
+            date: item.date,
             studentFirstName: item.student_first_name,
             studentLastName: item.student_last_name,
             reason: item.reason,
             comments: item.comments,
-            dateTime: `${item.date}T${item.start_time}`,
+            start_time: item.start_time,
+            end_time: item.end_time,
+            name: `${item.student_first_name} ${item.student_last_name}`,
             done: false, // Default 'done' status to false
           };
         });
 
-        setEvents(fetchedEvents.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+
+        const upcomingEvents = fetchedEvents
+          .filter(event => new Date(event.date) >= now)
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        const pastEventsData = fetchedEvents
+          .filter(event => new Date(event.date) < now)
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        setEvents(upcomingEvents);
+        setPastEvents(pastEventsData);
         setEntries(processedEntries);
       } catch (e: any) {
         setError(e.message);
@@ -86,20 +108,20 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     fetchData();
   }, []);
 
-  const getEventById = (id: string) => events.find(e => e.id === id);
+  const getEventById = (event_id: string) => events.find(e => e.event_id === event_id) || pastEvents.find(e => e.event_id === event_id);
 
-  const getEntriesByEventId = (eventId: string) => {
+  const getEntriesByEventId = (parent_event_id: string) => {
     return entries
-        .filter(entry => entry.eventId === eventId)
-        .sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime());
+        .filter(entry => entry.parent_event_id === parent_event_id)
+        .sort((a, b) => new Date(a.date_time_added).getTime() - new Date(b.date_time_added).getTime());
   };
 
-  const getEntryById = (id: string) => entries.find(e => e.id === id);
+  const getEntryById = (entry_id: string) => entries.find(e => e.entry_id === entry_id);
 
-  const updateEntryDoneStatus = (id: string, done: boolean) => {
+  const updateEntryDoneStatus = (entry_id: string, done: boolean) => {
     setEntries(prevEntries => 
       prevEntries.map(entry => 
-        entry.id === id ? { ...entry, done } : entry
+        entry.entry_id === entry_id ? { ...entry, done } : entry
       )
     );
   };
@@ -109,7 +131,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }
 
   return (
-    <DataContext.Provider value={{ events, entries, loading, getEventById, getEntriesByEventId, getEntryById, updateEntryDoneStatus }}>
+    <DataContext.Provider value={{ events, pastEvents, entries, loading, getEventById, getEntriesByEventId, getEntryById, updateEntryDoneStatus }}>
       {children}
     </DataContext.Provider>
   );

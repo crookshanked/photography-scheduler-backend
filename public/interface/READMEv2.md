@@ -183,3 +183,4 @@ If your application had user authentication and the API key was a highly sensiti
 Create a get-key.php Endpoint: This script would check $_SESSION to see if a user is logged in. If they are, it would respond with the API key as JSON.
 Update React App: Your DataContext.tsx would first fetch this endpoint, store the key in its state, and then use that key to make all subsequent calls to api.php.
 This approach adds a little complexity and an extra network request, but it ensures the API key is never exposed to unauthenticated users. It's a great pattern to consider if you add user accounts to your scheduler in the future.
+
