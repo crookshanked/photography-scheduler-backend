@@ -11,7 +11,7 @@ const EventTable: React.FC<EventTableProps> = ({ events }) => {
   const navigate = useNavigate();
 
   const handleRowClick = (eventId: string) => {
-    navigate(`/event/${eventId}`);
+    navigate(`/event-entries/${eventId}`);
   };
 
   return (
@@ -33,7 +33,9 @@ const EventTable: React.FC<EventTableProps> = ({ events }) => {
             >
               <td className="py-3 px-6 text-left whitespace-nowrap">{event.date}</td>
               <td className="py-3 px-6 text-left">{event.name}</td>
-              <td className="py-3 px-6 text-left">{event.location}</td>
+              <td className="py-3 px-6 text-left">
+                <div className="whitespace-pre-wrap">{event.location}</div>
+              </td>
             </tr>
           ))}
         </tbody>

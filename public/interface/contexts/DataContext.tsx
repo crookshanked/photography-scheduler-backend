@@ -78,6 +78,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             comments: item.comments,
             start_time: item.start_time,
             end_time: item.end_time,
+            timeframe: `${item.start_time} - ${item.end_time}`,
             name: `${item.student_first_name} ${item.student_last_name}`,
             done: false, // Default 'done' status to false
           };
@@ -113,7 +114,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const getEntriesByEventId = (parent_event_id: string) => {
     return entries
         .filter(entry => entry.parent_event_id === parent_event_id)
-        .sort((a, b) => new Date(a.date_time_added).getTime() - new Date(b.date_time_added).getTime());
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   };
 
   const getEntryById = (entry_id: string) => entries.find(e => e.entry_id === entry_id);

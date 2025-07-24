@@ -11,9 +11,12 @@ const EntryDetail: React.FC = () => {
   const { entry_id } = useParams<{ entry_id: string }>();
   const { getEntryById, updateEntryDoneStatus, loading, getEventById } = useData();
 
-  const entry = entry_id ? getEntryById(entry_id) : undefined;
+  // const entry = entry_id ? getEntryById(entry_id) : undefined;
+  const entry = getEntryById(entry_id || '');
   const event = entry ? getEventById(entry.parent_event_id) : undefined;
-
+  console.log('EntryDetailPage - entry_id:', entry_id);
+  console.log('EntryDetailPage - entry:', entry);
+  console.log('EntryDetailPage - event:', event);
   if (loading) {
     return <Layout loading={true}><div/></Layout>;
   }
@@ -24,6 +27,9 @@ const EntryDetail: React.FC = () => {
         <div className="text-center">
           <p>Entry not found.</p>
           <Link to="/" className="text-blue-600 hover:underline">Go Home</Link>
+          <br />
+          <Link to={-1} className="text-blue-600 hover:underline">Go Back</Link>
+          {/* <Link to="#" onClick={() => window.history.back()} className="text-blue-600 hover:underline">Go Back</Link> */}
         </div>
       </Layout>
     );

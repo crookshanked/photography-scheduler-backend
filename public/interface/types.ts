@@ -12,6 +12,7 @@ export interface Entry {
   date: string; // ISO string format
   start_time: string; // ISO string format
   end_time: string; // ISO string format
+  timeframe: string; // ISO string format
   name: string;
   reason: string;
   date_time_added: string; // ISO string format

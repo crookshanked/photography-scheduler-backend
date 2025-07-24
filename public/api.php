@@ -46,15 +46,15 @@ try {
     switch ($action) {
         case 'get_events':
             // Fetch distinct dates to represent "events"
-            $stmt = $db->query("SELECT DISTINCT date FROM schedule_imported ORDER BY date ASC");
-            $dates = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            $stmt = $db->query("SELECT * FROM schedule_events ORDER BY date ASC");
+            $eventsData = $stmt->fetchAll();
             $events = [];
-            foreach ($dates as $date) {
+            foreach ($eventsData as $event) {
                 // Create an event object for each unique date
                 $events[] = [
-                    'id' => $date, // Use date as the unique ID for an event
-                    'name' => 'Appointments for ' . (new DateTime($date))->format('F j, Y'),
-                    'date' => $date,
+                    'event_id' => $event['event_id'],
+                    'date' => $event['date'], 
+                    'name' => $event['name'], 
                 ];
             }
             $response = [
@@ -64,12 +64,16 @@ try {
             break;
 
         case 'get_entries':
-            $eventId = $_REQUEST['event_id'] ?? null;
-            if ($eventId) {
+            $parentEventId = $_REQUEST['parent_event_id'] ?? null;
+            if ($parentEventId) {
                 // Fetch entries for a specific event (date) using a prepared statement
-                $stmt = $db->prepare("SELECT * FROM schedule_imported WHERE date = ? ORDER BY start_time ASC");
-                $stmt->execute([$eventId]);
+                $stmt = $db->prepare("SELECT * FROM schedule_imported WHERE parent_event_id = ? ORDER BY start_time ASC");
+                // var_dump($stmt);
+                // var_dump($parentEventId);
+                $stmt->execute([$parentEventId]);
+                // var_dump($stmt);
                 $data = $stmt->fetchAll();
+                // var_dump($data);
             } else {
                 // Fetch all entries if no event_id is specified
                 $stmt = $db->query("SELECT * FROM schedule_imported ORDER BY date, start_time");
@@ -82,7 +86,23 @@ try {
             ];
             break;
 
+        case 'updateEntryStatus':
+            $entryId = $input['entry_id'] ?? null;
+            $status = $input['status'] ?? null;
+
+            if ($entryId === null || $status === null) {
+                $response = ['status' => 'error', 'message' => 'Missing entry_id or status for updateEntryStatus.'];
+                break;
+            }
+
+            $stmt = $db->prepare("UPDATE schedule_imported SET done = ? WHERE entry_id = ?");
+            $stmt->execute([(int)$status, $entryId]);
+
+            $response = ['status' => 'success', 'message' => 'Entry status updated successfully.', 'entry_id' => $entryId, 'new_status' => (int)$status];
+            break;
+
         case 'get_all': // The original behavior
+            // Fetch all entries and events
         default:
             $stmt = $db->query("SELECT * FROM schedule_imported ORDER BY date, start_time");
             $data = $stmt->fetchAll();

@@ -8,12 +8,12 @@ import FilterDropdown from '../components/FilterDropdown';
 import { Entry } from '../types';
 
 const EventEntries: React.FC = () => {
-  const { eventId } = useParams<{ eventId: string }>();
+  const { event_id } = useParams<{ event_id: string }>();
   const { getEventById, getEntriesByEventId, updateEntryDoneStatus, loading } = useData();
   const navigate = useNavigate();
 
-  const event = eventId ? getEventById(eventId) : undefined;
-  const entries = eventId ? getEntriesByEventId(eventId) : [];
+  const event = event_id ? getEventById(event_id) : undefined;
+  const entries = event_id ? getEntriesByEventID(event_id) : [];
 
   const handleRowClick = (entry: Entry) => {
     navigate(`/entry/${entry.entry_id}`);
@@ -24,12 +24,12 @@ const EventEntries: React.FC = () => {
     updateEntryDoneStatus(entryId, e.target.checked);
   };
   
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const datePart = date.toLocaleDateString('en-US', { timeZone: 'UTC', month: '2-digit', day: '2-digit', year: '2-digit' });
-    const timePart = date.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit', hour12: true });
-    return `${datePart} ${timePart}`;
-  };
+  // const formatDate = (dateString: string) => {
+  //   const date = new Date(dateString);
+  //   const datePart = date.toLocaleDateString('en-US', { timeZone: 'UTC', month: '2-digit', day: '2-digit', year: '2-digit' });
+  //   const timePart = date.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit', hour12: true });
+  //   return `${datePart} ${timePart}`;
+  // };
 
   const eventDate = event ? new Date(event.date).toLocaleDateString('en-US', { timeZone: 'UTC', month: '2-digit', day: '2-digit', year: 'numeric' }) : '';
   const subtitle = event ? `${event.name} (${eventDate})` : 'Loading...';
@@ -60,7 +60,7 @@ const EventEntries: React.FC = () => {
             <tbody className="text-gray-800 text-sm font-light">
               {entries.map((entry) => (
                 <tr key={entry.entry_id} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer" onClick={() => handleRowClick(entry)}>
-                  <td className="py-4 px-6 text-left whitespace-nowrap">{formatDate(entry.start_time)}</td>
+                  <td className="py-4 px-6 text-left whitespace-nowrap">{entry.timeframe}</td>
                   <td className="py-4 px-6 text-left">{entry.name}</td>
                   <td className="py-4 px-6 text-left">{entry.reason}</td>
                   <td className="py-4 px-6 text-center">
