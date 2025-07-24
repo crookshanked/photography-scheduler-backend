@@ -2,7 +2,26 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Entry } from '../types';
+import jszip from 'jszip';
+import pdfmake from 'pdfmake';
 import DataTable from 'datatables.net-react';
+import DataTablesCore from 'datatables.net-dt';
+import 'datatables.net-buttons-dt';
+import 'datatables.net-buttons/js/buttons.colVis.mjs';
+import 'datatables.net-buttons/js/buttons.html5.mjs';
+import 'datatables.net-buttons/js/buttons.print.mjs';
+import 'datatables.net-colreorder-dt';
+import 'datatables.net-columncontrol-dt';
+
+import 'datatables.net-fixedcolumns-dt';
+import 'datatables.net-fixedheader-dt';
+import 'datatables.net-responsive-dt';
+import 'datatables.net-searchbuilder-dt';
+import 'datatables.net-searchpanes-dt';
+
+DataTablesCore.Buttons.jszip(jszip);
+DataTablesCore.Buttons.pdfMake(pdfmake);
+DataTable.use(DataTablesCore);
 
 interface EntryTableProps {
   entries: Entry[];
@@ -24,7 +43,7 @@ const EntryTable: React.FC<EntryTableProps> = ({ entries, onCheckboxChange }) =>
     {
       title: 'Done',
       data: 'done',
-      render: (data: boolean, type: string, row: Entry) => (
+      render: (data: boolean, _type: string, row: Entry) => (
         <input
           type="checkbox"
           className="form-checkbox h-6 w-6 text-green-600 border-gray-400 rounded focus:ring-green-500"

@@ -5,7 +5,6 @@ import { useData } from '../contexts/DataContext';
 import Layout from '../components/Layout';
 import Header from '../components/Header';
 import FilterDropdown from '../components/FilterDropdown';
-import { Entry } from '../types';
 import EntryTable from '../components/EntryTable';
 
 const EventEntries: React.FC = () => {
@@ -33,7 +32,7 @@ const EventEntries: React.FC = () => {
     <Layout loading={loading}>
       <Header title="Photography Schedule" subtitle={subtitle} />
       <div className="mt-6 mb-4">
-        <Link to="/" className="text-blue-600 hover:underline text-sm mb-4 block">{'<< Back Home'}</Link>
+        <Link to={`/`} className="text-blue-600 hover:underline text-sm mb-4 block">{'<< Back Home'}</Link>
       </div>
       <div className="flex space-x-4 mb-4">
         <FilterDropdown />

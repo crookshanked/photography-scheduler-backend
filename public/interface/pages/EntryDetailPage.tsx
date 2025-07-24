@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { QRCode } from 'react-qrcode-logo';
 import { useData } from '../contexts/DataContext';
 import Layout from '../components/Layout';
@@ -9,6 +9,7 @@ import { QR_CODE_BASE_URL } from '../constants';
 
 const EntryDetail: React.FC = () => {
   const { entry_id } = useParams<{ entry_id: string }>();
+  const navigate = useNavigate();
   const { getEntryById, updateEntryDoneStatus, loading, getEventById } = useData();
 
   // const entry = entry_id ? getEntryById(entry_id) : undefined;
@@ -28,7 +29,7 @@ const EntryDetail: React.FC = () => {
           <p>Entry not found.</p>
           <Link to="/" className="text-blue-600 hover:underline">Go Home</Link>
           <br />
-          <Link to={-1} className="text-blue-600 hover:underline">Go Back</Link>
+                    <button onClick={() => navigate(-1)} className="text-blue-600 hover:underline">Go Back</button>
           {/* <Link to="#" onClick={() => window.history.back()} className="text-blue-600 hover:underline">Go Back</Link> */}
         </div>
       </Layout>

@@ -1,3 +1,13 @@
+@import url('datatables.net-dt');
+@import url('datatables.net-buttons-dt');
+@import url('datatables.net-colreorder-dt');
+@import url('datatables.net-columncontrol-dt');
+@import url('datatables.net-fixedcolumns-dt');
+@import url('datatables.net-fixedheader-dt');
+@import url('datatables.net-responsive-dt');
+@import url('datatables.net-searchbuilder-dt');
+@import url('datatables.net-searchpanes-dt');
+
 /* Reset default browser styles */
 body, h1, h2, h3, p, ul, ol, li, figure, figcaption, blockquote, dl, dd {
   margin: 0;

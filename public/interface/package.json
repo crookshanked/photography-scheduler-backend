@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
     "datatables.net-buttons-dt": "^3.2.4",
     "datatables.net-colreorder-dt": "^2.1.1",
     "datatables.net-columncontrol-dt": "^1.0.7",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
+    "@types/pdfmake": "^0.2.11",
     "@types/react": "^19.1.8",
     "typescript": "~5.7.2",
     "vite": "^6.2.0"
