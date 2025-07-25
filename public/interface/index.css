@@ -1,3 +1,4 @@
+@import "tailwindcss";
 @import url('datatables.net-dt');
 @import url('datatables.net-buttons-dt');
 @import url('datatables.net-colreorder-dt');
@@ -70,3 +71,70 @@ tr:nth-child(even) {
 /* .dark tr:nth-child(odd) {
   background-color: rgb(138, 144, 153 / var(--tw-border-opacity, 1));
 } */
+
+.dark .dt-search {
+  color: theme('colors.gray.200');
+}
+
+.dark .dt-input {
+  background-color: theme('colors.gray.800');
+  border-color: theme('colors.gray.700');
+  color: theme('colors.gray.200');
+}
+
+.dark .dt-input:focus {
+  border-color: theme('colors.blue.400');
+  box-shadow: 0 0 0 3px theme('colors.blue.400 / 0.5');
+}
+
+.dark .dt-length label,
+.dark .dt-info {
+  color: theme('colors.gray.500');
+}
+
+.dark .dt-button {
+  background-color: theme('colors.gray.700');
+  border-color: theme('colors.gray.700');
+  color: theme('colors.gray.200');
+}
+
+.dark .dt-button:hover {
+  background-color: theme('colors.gray.800');
+  border-color: theme('colors.gray.800');
+}
+
+.dark .dt-paging.dt-paging-full-numbers button.dt-paging-button {
+  background-color: theme('colors.gray.700');
+  border-color: theme('colors.gray.700');
+  color: theme('colors.gray.200');
+}
+
+.dark .dt-paging.dt-paging-full-numbers button.dt-paging-button:hover {
+  background-color: theme('colors.gray.800');
+  border-color: theme('colors.gray.800');
+}
+
+.dark .dt-paging.dt-paging-full-numbers button.dt-paging-button.current {
+  background-color: theme('colors.gray.800');
+  border-color: theme('colors.gray.800');
+}
+
+.dark .dt-row:nth-child(even) {
+  background-color: theme('colors.gray.800');
+}
+
+.dark .dt-row:nth-child(odd) {
+  background-color: theme('colors.gray.900');
+}
+
+.dark .dt-row:hover {
+  background-color: theme('colors.gray.700');
+}
+
+.dark .dt-column-title {
+  color: theme('colors.gray.200');
+}
+
+.dark .dt-column-order-icon path {
+  fill: theme('colors.gray.200');
+}
