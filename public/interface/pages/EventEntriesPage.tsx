@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import Layout from '../components/Layout';
 import Header from '../components/Header';
-import FilterDropdown from '../components/FilterDropdown';
+// import FilterDropdown from '../components/FilterDropdown';
 import EntryTable from '../components/EntryTable';
 
 const EventEntries: React.FC = () => {
@@ -34,12 +34,12 @@ const EventEntries: React.FC = () => {
       <div className="mt-6 mb-4">
         <Link to={`/`} className="text-blue-600 hover:underline text-sm mb-4 block">{'<< Back Home'}</Link>
       </div>
-      <div className="flex space-x-4 mb-4">
+      {/* <div className="flex space-x-4 mb-4">
         <FilterDropdown />
         <FilterDropdown />
         <FilterDropdown />
         <FilterDropdown />
-      </div>
+      </div> */}
       <EntryTable entries={entries} onCheckboxChange={handleCheckboxChange} />
     </Layout>
   );

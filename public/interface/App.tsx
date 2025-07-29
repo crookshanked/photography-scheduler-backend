@@ -15,7 +15,7 @@ const App: React.FC = () => {
           <Route path="/" element={<UpcomingEventsPage />} />
           <Route path="/previous" element={<PreviousEventsPage />} />
           <Route path="/event-entries/:eventId" element={<EventEntriesPage />} />
-          <Route path="/entry/:entryId" element={<EntryDetailPage />} />
+          <Route path="/entry-detail/:entry_id" element={<EntryDetailPage />} />
         </Routes>
       </HashRouter>
     </DataProvider>

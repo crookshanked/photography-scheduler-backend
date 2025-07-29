@@ -152,13 +152,11 @@ Step 3: Update DataContext.tsx to Use the Injected Key
 Finally, modify your React context to read the key from the global window object instead of hardcoding it. This makes your component more secure and configurable from the backend.
 
 DataContext.tsx
--2
-+8
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   // TODO: Move API_KEY to a secure place, like an environment variable.
-  const API_KEY = 'your-super-secret-and-random-api-key';
+  const API_KEY = '';
   // Read the API_KEY from the global window object injected by PHP
   const API_KEY = (window as any).VITE_CONFIG?.API_KEY;
 

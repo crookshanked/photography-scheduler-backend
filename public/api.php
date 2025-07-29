@@ -68,6 +68,7 @@ try {
             $parentEventId = $_REQUEST['parent_event_id'] ?? null;
             if ($parentEventId) {
                 // Fetch entries for a specific event (date) using a prepared statement
+                // TODO: Finally TODO: Finish changing this over to schedule_converted perhaps?
                 $stmt = $db->prepare("SELECT * FROM schedule_imported WHERE parent_event_id = ? ORDER BY start_time ASC");
                 // var_dump($stmt);
                 // var_dump($parentEventId);
@@ -77,6 +78,7 @@ try {
                 // var_dump($data);
             } else {
                 // Fetch all entries if no event_id is specified
+                // TODO: Finally TODO: Finish changing this over to schedule_converted perhaps?
                 $stmt = $db->query("SELECT * FROM schedule_imported ORDER BY date, start_time");
                 $data = $stmt->fetchAll();
             }
@@ -88,14 +90,32 @@ try {
             break;
 
         case 'updateEntryStatus':
+            $input = json_decode(file_get_contents('php://input'), true);
             $entryId = $input['entry_id'] ?? null;
             $status = $input['status'] ?? null;
-
+            // Check if both entry_id and status are provided
+            if (!isset($entryId) || !isset($status)) {
+                header("Location: https://youtu.be/sT-t6lAbHgY");
+                die();
+            }
             if ($entryId === null || $status === null) {
                 $response = ['status' => 'error', 'message' => 'Missing entry_id or status for updateEntryStatus.'];
                 break;
             }
-
+            // What other security checks can be done? 
+            // Since the prepared statement only affects one field and that field is a tinyint(1) there doesn't seem to be much that could come to mind?
+            // Sanitize input just in case...
+            // Check for a 1 or 0 or T or F...
+            // Should these be OR instead of AND?
+            if($status != 1 && $status != 0 && $status !== '1' && $status !== '0' && strtolower($status) !== 't' && strtolower($status) !== 'f') {
+                $response = ['status' => 'error', 'message' => 'Invalid status value for updateEntryStatus.'];
+                break;
+            }
+            // Make sure entry_id is a valid UUIDv4
+            if (!is_uuidv4($entryId)) {
+                $response = ['status' => 'error', 'message' => 'Invalid entry_id for updateEntryStatus.'];
+                break;
+            }
             $stmt = $db->prepare("UPDATE schedule_imported SET done = ? WHERE entry_id = ?");
             $stmt->execute([(int)$status, $entryId]);
 

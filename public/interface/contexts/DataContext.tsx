@@ -68,19 +68,33 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
         // Process raw entries from the API
         const processedEntries: Entry[] = entriesResult.data.map((item: any) => {
+          const formatTime = (timeString: string) => {
+            if (!timeString) return '';
+            const [hour, minute] = timeString.split(':');
+            const hourNum = parseInt(hour, 10);
+            const ampm = hourNum >= 12 ? 'PM' : 'AM';
+            const formattedHour = hourNum % 12 || 12;
+            return `${formattedHour}:${minute} ${ampm}`;
+          };
+          const formatDate = (dateString: string) => {
+            if (!dateString || !dateString.includes('-')) return dateString;
+            const [, month, day] = dateString.split('-');
+            return `${parseInt(month, 10)}-${parseInt(day, 10)}`;
+          };
           return {
             entry_id: item.entry_id,
             parent_event_id: item.parent_event_id,
-            date: item.date,
+            originalDate: item.date,
+            date: formatDate(item.date),
             studentFirstName: item.student_first_name,
             studentLastName: item.student_last_name,
             reason: item.reason,
             comments: item.comments,
             start_time: item.start_time,
             end_time: item.end_time,
-            timeframe: `${item.start_time} - ${item.end_time}`,
+            timeframe: `${formatTime(item.start_time)} - ${formatTime(item.end_time)}`,
             name: `${item.student_first_name} ${item.student_last_name}`,
-            done: false, // Default 'done' status to false
+            done: item.done, // Default 'done' status to false
           };
         });
 

@@ -4,9 +4,20 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig(({ mode }) => {
-    base: "./";
     const env = loadEnv(mode, '.', '');
     return {
+      base: "./",
+      build: {
+        rollupOptions: {
+            output: {
+                manualChunks: (id) => {
+                    if (id.includes('node_modules')) {
+                        return 'vendor';
+                    }
+                },
+            },
+        },
+      },
       plugins: [
         react(),
         tailwindcss()

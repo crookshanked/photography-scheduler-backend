@@ -43,13 +43,26 @@
     ////////////////////////////////////////////////////////////////////////
     -->
 </head>
+<?php
+// require_once __DIR__ . '/../vendor/autoload.php';
+// require_once __DIR__ . '/../app/config.php';
+// use Ramsey\Uuid\Uuid;
+// This file is linked to directly only via direct messaging or email to a user. 
+// The functionality of this page is to start a php session, and set a session variable.
+// Ideal functionality would be to log the user's IP,http_user_agent,http_referrer, session start date/time...
+
+session_start();
+die();
+// TODO: Need to add some security to prevent anyone from hitting this page without authorization.
+?>
 <body class="bg-light">
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body">
-                        <h2 class="card-title mb-4">Upload .xlsx File</h2>
+                        <!-- TODO: Event List Upload -->
+                        <h2 class="card-title mb-4">Upload .xlsx Event Schedule File</h2>
                         <form action="upload.php" method="post" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="xlsxFile" class="form-label">Select .xlsx file to upload:</label>
