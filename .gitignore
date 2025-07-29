@@ -3,3 +3,4 @@ app/config.php
 node_modules/
 node_modules/.package-lock.json
 public/uploads/
+public/interface/.env.local
