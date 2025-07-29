@@ -54,10 +54,10 @@ if (isset($_REQUEST['logout']) && $_REQUEST['logout'] == 1){
     header('Location: https://youtu.be/sT-t6lAbHgY');
     exit();
 }
-if (isset($_REQUEST['donut']) && $_REQUEST['donut'] == 67274744){
+if (isset($_REQUEST['donut']) && $donutKey && $_REQUEST['donut'] == $donutKey){
     $_SESSION['processing_login'] = true;
 };
-if(isset($_SESSION['processing_login']) && $_SESSION['processing_login'] && isset($_REQUEST['donut']) && $_REQUEST['donut'] == 67274744)
+if(isset($_SESSION['processing_login']) && $_SESSION['processing_login'] && isset($_REQUEST['donut']) && $donutKey && $_REQUEST['donut'] == $donutKey)
 {
     $_SESSION['processing_login'] = false;
     $_SESSION['loggedin'] = true;
