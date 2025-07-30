@@ -1,201 +1,27 @@
+
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photography by Kyle R Crookshank</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .font-playfair {
-            font-family: 'Playfair Display', serif;
-        }
-        /* Slideshow animation */
-        .slide-fade {
-            animation: fade 1.5s ease-in-out;
-        }
-        @keyframes fade {
-            from {opacity: .4}
-            to {opacity: 1}
-        }
-    </style>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Photography Schedule</title>
+
+  <script type="importmap">
+{
+  "imports": {
+    "react": "./node_modules/react/index.js",
+    "react/": "./node_modules/react/",
+    "react-dom/": "./node_modules/react-dom/",
+    "react-router-dom": "./node_modules/react-router-dom/dist/index.js",
+    "react-qrcode-logo": "./node_modules/react-qrcode-logo/lib/index.js"
+  }
+}
+</script>
+  <script type="module" crossorigin src="./assets/index-DTWzad17.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/vendor-DjmTLX_b.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-B2FyjDaZ.css">
 </head>
-<body class="bg-gray-100 text-gray-800">
-
-    <!-- Header -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-playfair font-bold text-gray-900">Photos by Kyle R Crookshank</a>
-            <div>
-                <a href="#about" class="text-gray-600 hover:text-gray-900 px-4">About</a>
-                <a href="#contact" class="text-gray-600 hover:text-gray-900 px-4">Contact</a>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Main Content -->
-    <main>
-        <!-- Slideshow section -->
-        <section class="w-full h-[auto] md:h-[auto] relative overflow-hidden">
-        <!-- <section class="w-full h-[60vh] md:h-[80vh] relative overflow-hidden"> -->
-            <!-- Slides -->
-            <div class="slideshow-container h-full">
-                <div class="slide-fade h-full">
-                    <img src="assets/img/1.jpg" class="w-full h-full object-cover" alt="Photos by Kyle R Crookshank - Left and Right Arrow to Navigate Slides">
-                </div>
-                <div class="slide-fade h-full hidden">
-                    <img src="assets/img/2.jpg" class="w-full h-full object-cover" alt="Photos by Kyle R Crookshank - Left and Right Arrow to Navigate Slides">
-                </div>
-                <div class="slide-fade h-full hidden">
-                    <img src="assets/img/5.jpg" class="w-full h-full object-cover" alt="Photos by Kyle R Crookshank - Left and Right Arrow to Navigate Slides">
-                </div>
-                <div class="slide-fade h-full hidden">
-                    <img src="assets/img/10.jpg" class="w-full h-full object-cover" alt="Photos by Kyle R Crookshank">
-                </div>
-                <div class="slide-fade h-full hidden">
-                    <img src="assets/img/11.jpg" class="w-full h-full object-cover" alt="Photos by Kyle R Crookshank">
-                </div>
-                <div class="slide-fade h-full hidden">
-                    <img src="assets/img/12.jpg" class="w-full h-full object-cover" alt="Photos by Kyle R Crookshank">
-                </div>
-                <div class="slide-fade h-full hidden">
-                    <img src="assets/img/15.jpg" class="w-full h-full object-cover" alt="Photos by Kyle R Crookshank">
-                </div>
-                <div class="slide-fade h-full hidden">
-                    <img src="assets/img/16.jpg" class="w-full h-full object-cover" alt="Photos by Kyle R Crookshank">
-                </div>
-                <div class="slide-fade h-full hidden">
-                    <img src="assets/img/21.jpg" class="w-full h-full object-cover" alt="Photos by Kyle R Crookshank">
-                </div>
-                <div class="slide-fade h-full hidden">
-                    <img src="assets/img/22.jpg" class="w-full h-full object-cover" alt="Photos by Kyle R Crookshank">
-                </div>
-                <div class="slide-fade h-full hidden">
-                    <img src="assets/img/23.jpg" class="w-full h-full object-cover" alt="Photos by Kyle R Crookshank">
-                </div>
-                <div class="slide-fade h-full hidden">
-                    <img src="assets/img/24.jpg" class="w-full h-full object-cover" alt="Photos by Kyle R Crookshank">
-                </div>
-
-                <!-- Prev/Next buttons -->
-                <a class="absolute top-1/2 left-0 transform -translate-y-1/2 p-4 text-white font-bold text-2xl cursor-pointer" onclick="plusSlides(-1)">&#10094;</a>
-                <a class="absolute top-1/2 right-0 transform -translate-y-1/2 p-4 text-white font-bold text-2xl cursor-pointer" onclick="plusSlides(1)">&#10095;</a>
-            </div>
-            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                <span class="dot cursor-pointer h-3 w-3 bg-white rounded-full" onclick="currentSlide(1)"></span>
-                <span class="dot cursor-pointer h-3 w-3 bg-white/50 rounded-full" onclick="currentSlide(2)"></span>
-                <span class="dot cursor-pointer h-3 w-3 bg-white/50 rounded-full" onclick="currentSlide(3)"></span>
-                <span class="dot cursor-pointer h-3 w-3 bg-white/50 rounded-full" onclick="currentSlide(4)"></span>
-            </div>
-        </section>
-
-        <!-- About Section -->
-        <section id="about" class="py-20 px-6 bg-white">
-            <div class="container mx-auto text-center max-w-3xl">
-                <h2 class="text-4xl font-playfair font-bold mb-4">About Me</h2>
-                <p class="text-lg text-gray-700 leading-relaxed">
-                    Hi! I'm Kyle, a passionate human with a love for capturing the beauty of everyday moments. My journey behind the lens began as a hobby in the darkroom at my high school and quickly grew into a lifelong expression of creativity and storytelling. Whether it's landscapes, portraits, or candid shots, I strive to create images that evoke emotion and inspire connection. Thank you for visiting my portfolio!
-                </p>
-            </div>
-        </section>
-
-        <!-- Gallery Teaser -->
-        <!-- <section class="py-20 px-6">
-             <div class="container mx-auto">
-                <h2 class="text-4xl font-playfair font-bold text-center mb-12">My Work</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                        <img src="https://placehold.co/600x400/CCCCCC/FFFFFF?text=Portfolio+1" class="w-full h-64 object-cover" alt="Portfolio image 1">
-                    </div>
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                        <img src="https://placehold.co/600x400/AAAAAA/FFFFFF?text=Portfolio+2" class="w-full h-64 object-cover" alt="Portfolio image 2">
-                    </div>
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                        <img src="https://placehold.co/600x400/888888/FFFFFF?text=Portfolio+3" class="w-full h-64 object-cover" alt="Portfolio image 3">
-                    </div>
-                </div>
-             </div>
-        </section> -->
-
-        <!-- Contact Section -->
-        <section id="contact" class="py-20 px-6 bg-gray-800 text-white">
-            <div class="container mx-auto text-center">
-                <h2 class="text-4xl font-playfair font-bold mb-4">Get In Touch</h2>
-                <p class="text-lg mb-8">If you have any questions please reach out! I'd love to hear from you.</p>
-                <a href="mailto:photosby@kylecrookshank.com" class="bg-white text-gray-800 font-bold py-3 px-6 rounded-full hover:bg-gray-200 transition duration-300">Email Me</a>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-6">
-        <div class="container mx-auto text-center">
-            <p>&copy; 2025 Kyle R Crookshank. All Rights Reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-        let slideIndex = 1;
-        let slideInterval;
-
-        showSlides(slideIndex);
-
-        // Next/previous controls
-        function plusSlides(n) {
-            clearInterval(slideInterval); // Stop auto slide on manual click
-            showSlides(slideIndex += n);
-            startSlideInterval(); // Restart auto slide
-        }
-
-        // Thumbnail image controls
-        function currentSlide(n) {
-            clearInterval(slideInterval);
-            showSlides(slideIndex = n);
-            startSlideInterval();
-        }
-
-        function showSlides(n) {
-            let i;
-            let slides = document.getElementsByClassName("slide-fade");
-            let dots = document.getElementsByClassName("dot");
-            if (n > slides.length) {slideIndex = 1}
-            if (n < 1) {slideIndex = slides.length}
-            for (i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-            for (i = 0; i < dots.length; i++) {
-                dots[i].className = dots[i].className.replace(" bg-white", " bg-white/50");
-            }
-            slides[slideIndex-1].style.display = "block";
-            dots[slideIndex-1].className += " bg-white";
-        }
-
-        function autoSlides() {
-            plusSlides(1);
-        }
-
-        function startSlideInterval() {
-             slideInterval = setInterval(autoSlides, 5000); // Change image every 5 seconds
-        }
-
-        // Start the slideshow on window load
-        window.onload = function() {
-            startSlideInterval();
-        }
-
-        // Add a snippet that binds left and right arrow keys to next and previous slides.
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'ArrowLeft') {
-                plusSlides(-1);
-            } else if (event.key === 'ArrowRight') {
-                plusSlides(1);
-            }
-        });
-
-    </script>
-
-</body>
+  <body class="bg-grid-pattern">
+    <div id="root"></div>
+  </body>
 </html>

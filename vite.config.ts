@@ -1,0 +1,39 @@
+import path from 'path';
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig(({ mode }) => {
+    const env = loadEnv(mode, '.', '');
+    return {
+      base: "./",
+      build: {
+        outDir: path.resolve(__dirname, ''),
+        assetsDir: 'assets',
+        minify: false,
+        rollupOptions: {
+            output: {
+                manualChunks: (id) => {
+                    if (id.includes('node_modules')) {
+                        return 'vendor';
+                    }
+                },
+            },
+        },
+      },
+      plugins: [
+        react(),
+        tailwindcss()
+      ],
+      define: {
+        'process.env.SCHEDULER_API_KEY': JSON.stringify(env.SCHEDULER_API_KEY),
+        // 'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+      },
+      resolve: {
+        alias: {
+          '@': path.resolve(__dirname, '.'),
+        }
+      }
+    };
+});
