@@ -35,10 +35,6 @@ const EntryTable: React.FC<EntryTableProps> = ({ entries }) => {
   };
 
   const columns = [
-    { title: 'Date', data: 'date' },
-    { title: 'Name', data: 'name' },
-    { title: 'Timeframe', data: 'timeframe' },
-    { title: 'Reason', data: 'reason' },
     {
       title: 'Actions',
       data: 'entry_id',
@@ -54,6 +50,10 @@ const EntryTable: React.FC<EntryTableProps> = ({ entries }) => {
         }
       }
     },
+    { title: 'Date', data: 'date' },
+    { title: 'Name', data: 'name' },
+    { title: 'Timeframe', data: 'timeframe' },
+    { title: 'Reason', data: 'reason' },
   ];
 
   return (

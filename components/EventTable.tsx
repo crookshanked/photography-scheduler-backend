@@ -37,9 +37,6 @@ const EventTable: React.FC<EventTableProps> = ({ events }) => {
   // console.log('events: ');
   // console.log(events);
   const columns = [
-    { title: 'Date', data: 'date' },
-    { title: 'Name', data: 'name' },
-    { title: 'Location', data: 'location' },
     {
       title: 'Actions',
       data: 'event_id',
@@ -55,6 +52,9 @@ const EventTable: React.FC<EventTableProps> = ({ events }) => {
         }
       }
     },
+    { title: 'Date', data: 'date' },
+    { title: 'Name', data: 'name' },
+    { title: 'Location', data: 'location' },
   ];
   // console.log('events: ');
   // console.log(events);
