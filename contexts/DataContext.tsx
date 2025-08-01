@@ -102,11 +102,11 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         now.setHours(0, 0, 0, 0);
 
         const upcomingEvents = fetchedEvents
-          .filter(event => new Date(event.date) >= now)
+          .filter(event => new Date(event.date).setHours(0, 0, 0, 0) >= now.getTime())
           .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
         const pastEventsData = fetchedEvents
-          .filter(event => new Date(event.date) < now)
+          .filter(event => new Date(event.date).setHours(0, 0, 0, 0) < now.getTime())
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         setEvents(upcomingEvents);
